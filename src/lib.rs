@@ -35,6 +35,7 @@ fn square(phase: f64) -> f64 {
 //
 
 pub trait WaveTable {
+    fn new(size: usize) -> Self;
     fn synth(&self, n: usize, f: f64, fs: f64) -> f64;
 }
 
@@ -46,16 +47,14 @@ macro_rules! impl_wavetable {
                 table: Vec<f64>,
             }
 
-            impl $waveform {
-                pub fn new(size: usize) -> Self {
+            impl WaveTable for $waveform {
+                fn new(size: usize) -> Self {
                     paste! {
                         let table: Vec<f64> = (0..size).map(|i| [<$waveform:lower>](i as f64 / size as f64)).collect();
                         $waveform { size, table }
                     }
                 }
-            }
-
-            impl WaveTable for $waveform {
+                
                 fn synth(&self, n: usize, f: f64, fs: f64) -> f64 {
                     let pos = n as f64 * f / fs * self.size as f64;
                     let pos_mod_n = fmod(pos, self.size as f64);
