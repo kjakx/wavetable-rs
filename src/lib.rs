@@ -54,7 +54,7 @@ macro_rules! impl_wavetable {
                         $waveform { size, table }
                     }
                 }
-                
+
                 fn synth(&self, n: usize, f: f64, fs: f64) -> f64 {
                     let pos = n as f64 * f / fs * self.size as f64;
                     let pos_mod_n = fmod(pos, self.size as f64);
@@ -74,7 +74,7 @@ mod tests {
     use hound;
     use dasp_sample::Sample;
 
-    fn write_wave(wt: impl WaveTable, f: f64, fs: f64, dur_sec: f64, name: &str) {
+    fn write_wave(wt: &impl WaveTable, f: f64, fs: f64, dur_sec: f64, name: &str) {
         let spec = hound::WavSpec {
             channels: 1,
             sample_rate: fs as u32,
@@ -90,24 +90,24 @@ mod tests {
     #[test]
     fn generate_sine_wave() {
         let wt = Sine::new(1024);
-        write_wave(wt, 531.33, 44100.0, 1.0, "wav/sine_wavetable_C.wav");
+        write_wave(&wt, 531.33, 44100.0, 1.0, "wav/sine_wavetable_C.wav");
     }
 
     #[test]
     fn generate_tri_wave() {
         let wt = Tri::new(1024);
-        write_wave(wt, 531.33, 44100.0, 1.0, "wav/tri_wavetable_C.wav");
+        write_wave(&wt, 531.33, 44100.0, 1.0, "wav/tri_wavetable_C.wav");
     }
 
     #[test]
     fn generate_saw_wave() {
         let wt = Saw::new(1024);
-        write_wave(wt, 531.33, 44100.0, 1.0, "wav/saw_wavetable_C.wav");
+        write_wave(&wt, 531.33, 44100.0, 1.0, "wav/saw_wavetable_C.wav");
     }
 
     #[test]
     fn generate_square_wave() {
         let wt = Square::new(1024);
-        write_wave(wt, 531.33, 44100.0, 1.0, "wav/square_wavetable_C.wav");
+        write_wave(&wt, 531.33, 44100.0, 1.0, "wav/square_wavetable_C.wav");
     }
 }
