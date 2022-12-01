@@ -1,5 +1,4 @@
 use std::f64::consts::PI;
-use float_extras::f64::fmod;
 use paste::paste;
 
 //
@@ -56,10 +55,9 @@ macro_rules! impl_wavetable {
                 }
 
                 fn synth(&self, n: usize, f: f64, fs: f64) -> f64 {
-                    let pos = n as f64 * f / fs * self.size as f64;
-                    let pos_mod_n = fmod(pos, self.size as f64);
-                    let rel_pos = pos_mod_n / self.size as f64;
-                    (1.0 - rel_pos) * self.table[pos_mod_n as usize] + rel_pos * self.table[(pos_mod_n as usize + 1) % self.size]
+                    let pos = (n as f64 * f / fs).fract() * self.size as f64;
+                    let rel_pos = pos / self.size as f64;
+                    (1.0 - rel_pos) * self.table[pos as usize] + rel_pos * self.table[(pos as usize + 1) % self.size]
                 }
             }
         )*
