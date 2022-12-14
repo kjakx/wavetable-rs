@@ -67,6 +67,14 @@ macro_rules! impl_wavetable {
 
 impl_wavetable!{ Sine Tri Saw Square }
 
+impl WaveTable for Vec<f64> {
+    fn synth(&self, n: usize, f: f64, fs: f64) -> f64 {
+        let pos = (n as f64 * f / fs).fract() * self.len() as f64;
+        let rel_pos = pos / self.len() as f64;
+        (1.0 - rel_pos) * self[pos as usize] + rel_pos * self[(pos as usize + 1) % self.len()]
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -108,5 +116,13 @@ mod tests {
     fn generate_square_wave() {
         let wt = Square::new(1024);
         write_wave(&wt, 531.33, 44100.0, 1.0, "wav/square_wavetable_C.wav");
+    }
+
+    #[test]
+    fn generate_random_wave() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let wt: Vec<f64> = (0..64).map(|_| (rng.gen::<f64>() - 0.5) * 2.0).collect();
+        write_wave(&wt, 531.33, 44100.0, 1.0, "wav/random_wavetable_C.wav");
     }
 }
